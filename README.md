@@ -1,40 +1,26 @@
 # AI 会员价格雷达 · 已上线
 
-> **当前地址：<https://hzexin5-star.github.io/>**
-> **目标地址：<https://price.ireliashop.com/>**（待绑定，见下方「绑定自定义域名」）
-> 已配置**每天自动更新**，你不需要做任何事。
+> ## 🌐 正式地址：<https://price.ireliashop.com/>
+> 已配置**每天自动更新** + **强制 HTTPS**，你不需要做任何事。
+> （备用地址 `https://hzexin5-star.github.io/` 会自动跳转到正式地址）
 
 一个零成本、全自动的引流工具站：每天自动抓取上游公开商品数据，生成「AI 会员价格 / 库存 / 规格」汇总站。
 每个商品都带**你的推广参数**（`?from=27695`），用户点进去下单，佣金自动归你。
 
 ---
 
-## 🔗 绑定自定义域名（price.ireliashop.com）
+## ✅ 域名绑定已完成
 
-你的域名 `ireliashop.com` 在**阿里云（万网）云解析**。`www` 已经指向你的分站店铺，**不要动它**。
-工具站用子域名 `price.ireliashop.com`，与店铺同主域，SEO 权重互通。
-
-### 你需要做的一步（阿里云，约 30 秒）
-
-1. 登录 <https://dns.console.aliyun.com/>
-2. 找到 **ireliashop.com** → 点「解析设置」
-3. 点「添加记录」，按下表填：
-
-| 字段 | 值 |
+| 项目 | 结果 |
 |---|---|
-| 记录类型 | **CNAME** |
-| 主机记录 | **price** |
-| 解析线路 | 默认 |
-| 记录值 | **hzexin5-star.github.io** |
-| TTL | 600（10 分钟） |
+| 正式域名 | `price.ireliashop.com` |
+| 解析商 | 阿里云（万网）云解析 |
+| DNS 记录 | CNAME `price` → `hzexin5-star.github.io`（**已生效，国内可访问**） |
+| HTTPS 证书 | ✅ 已签发（Let's Encrypt） |
+| 强制 HTTPS | ✅ 已开启 |
+| 与店铺关系 | 同主域 `ireliashop.com` — 品牌统一、SEO 权重互通；`www` 仍是你的店铺，未受影响 |
 
-4. 保存
-
-### 然后双击
-
-**`4-绑定域名.bat`** —— 它会自动完成：检查 DNS → 推送代码 → 设置 GitHub Pages 自定义域名 → 等待 HTTPS 证书 → 线上验证。
-
-> 也可以用命令行：`.\bind-domain.ps1 -Domain price.ireliashop.com`
+> 若以后要换子域名（如 `bi.ireliashop.com`）：改 `build.mjs` 的 `customDomain` + `siteUrl`，在阿里云加对应 CNAME，然后运行 `bind-domain.ps1 -Domain 新域名`。
 
 ---
 
