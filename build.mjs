@@ -22,11 +22,13 @@ const CONFIG = {
   // ★ 你的商户ID / 推广ID（必须改！这是佣金归因的关键）
   from: '27695',
 
-  // ★ 站点信息（改成你自己的品牌）
+  // 站点信息（改成你自己的品牌）
   siteName: 'AI 会员价格雷达',
   siteTagline: 'AI 会员 / 账号 / 订阅 全网价格与库存汇总',
   siteDesc:
     'AI 会员价格雷达：汇总 ChatGPT、Claude、Gemini、Grok、Perplexity 等 AI 会员与账号的实时价格、库存与规格，帮你快速对比、少花冤枉钱。',
+  // 你的 QQ 群（显示在页脚，方便用户咨询）
+  qqGroup: '1131806272',
   // ★ 部署后你的真实域名（sitemap / canonical 会用到）
   // 已部署到 GitHub Pages：https://hzexin5-star.github.io
   siteUrl: 'https://hzexin5-star.github.io',
@@ -344,6 +346,9 @@ footer.site{border-top:1px solid var(--line);background:#fff;margin-top:20px}
   padding:12px 18px;border-radius:999px;box-shadow:0 10px 26px rgba(79,70,229,.35);transition:.18s}
 .float-cta:hover{transform:translateY(-2px);filter:brightness(1.06)}
 @media(max-width:640px){.float-cta{right:12px;bottom:12px;padding:11px 15px;font-size:13px}}
+.contact-line{color:#4b5563}
+.copy-qq{color:var(--brand);font-weight:700;border-bottom:1px dashed #c7d2fe;padding-bottom:1px}
+.copy-qq:hover{color:#3730a3}
 `;
 
 function layout({ title, desc, canonical, body, jsonld, siteUrl }) {
@@ -377,6 +382,7 @@ ${body}
 <footer class="site">
   <div class="foot">
     <p><strong>${esc(CONFIG.siteName)}</strong> · ${esc(CONFIG.siteTagline)}</p>
+    <p class="contact-line">价格疑问 / 选型建议：<a href="javascript:;" class="copy-qq" data-copy="${esc(CONFIG.qqGroup)}">QQ 群 ${esc(CONFIG.qqGroup)}</a>（点击复制，群里回复更快）</p>
     <p>本站仅做公开价格与库存信息的整理与展示，<b>不销售任何商品、不参与交易、不提供售后</b>。所有商品与价格以下单页面为准，购买前请自行核对商品说明与质保条款。</p>
     <p>AI 会员与账号类商品存在官方风控、掉号、封号等风险，请评估自身风险后再购买。部分商品可能受服务条款限制，请遵守相关平台规则。</p>
   </div>
@@ -664,6 +670,28 @@ const APP_JS = String.raw`
   var sorts=document.getElementById('sorts');
   var count=document.getElementById('count');
   var empty=document.getElementById('empty');
+
+  // 一键复制 QQ 群号（所有页面可用）
+  document.addEventListener('click', function(e){
+    var el = e.target && e.target.closest ? e.target.closest('[data-copy]') : null;
+    if(!el) return;
+    e.preventDefault();
+    var txt = el.getAttribute('data-copy');
+    var done = function(){
+      var old = el.textContent;
+      el.textContent = '已复制：' + txt;
+      setTimeout(function(){ el.textContent = old; }, 1800);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done, done);
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = txt; document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); }catch(ignore){}
+      document.body.removeChild(ta); done();
+    }
+  });
+
   if(!grid)return;
   var cards=Array.prototype.slice.call(grid.querySelectorAll('.item'));
   var state={kw:'',cat:0,sort:'sold'};
