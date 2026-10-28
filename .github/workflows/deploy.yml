@@ -1,0 +1,65 @@
+name: Build & Deploy
+
+on:
+  # 每天北京时间 06:00 自动重新抓取上游价格并部署（UTC 22:00）
+  schedule:
+    - cron: '0 22 * * *'
+  # 支持手动触发
+  workflow_dispatch:
+  # 推送代码时也部署
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build static site
+        run: node build.mjs
+
+      - name: Show build result
+        run: |
+          echo "生成页面数：$(find dist -name '*.html' | wc -l)"
+          echo "站点大小：$(du -sh dist | cut -f1)"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Ping IndexNow (Bing / Yandex 自动收录)
+        run: |
+          KEY=f3a91c7e5b2d48a6c1e9f0b7d3a5c8e2
+          BASE=https://hzexin5-star.github.io
+          curl -s -X POST "https://api.indexnow.org/indexnow" \
+            -H "Content-Type: application/json; charset=utf-8" \
+            -d "{\"host\":\"hzexin5-star.github.io\",\"key\":\"$KEY\",\"keyLocation\":\"$BASE/$KEY.txt\",\"urlList\":[\"$BASE/\",\"$BASE/guide.html\",\"$BASE/sitemap.xml\"]}" \
+            -w "\nIndexNow HTTP %{http_code}\n" || true
