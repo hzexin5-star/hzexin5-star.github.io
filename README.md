@@ -1,10 +1,40 @@
 # AI 会员价格雷达 · 已上线
 
-> **线上地址：<https://hzexin5-star.github.io/>**
+> **当前地址：<https://hzexin5-star.github.io/>**
+> **目标地址：<https://price.ireliashop.com/>**（待绑定，见下方「绑定自定义域名」）
 > 已配置**每天自动更新**，你不需要做任何事。
 
 一个零成本、全自动的引流工具站：每天自动抓取上游公开商品数据，生成「AI 会员价格 / 库存 / 规格」汇总站。
 每个商品都带**你的推广参数**（`?from=27695`），用户点进去下单，佣金自动归你。
+
+---
+
+## 🔗 绑定自定义域名（price.ireliashop.com）
+
+你的域名 `ireliashop.com` 在**阿里云（万网）云解析**。`www` 已经指向你的分站店铺，**不要动它**。
+工具站用子域名 `price.ireliashop.com`，与店铺同主域，SEO 权重互通。
+
+### 你需要做的一步（阿里云，约 30 秒）
+
+1. 登录 <https://dns.console.aliyun.com/>
+2. 找到 **ireliashop.com** → 点「解析设置」
+3. 点「添加记录」，按下表填：
+
+| 字段 | 值 |
+|---|---|
+| 记录类型 | **CNAME** |
+| 主机记录 | **price** |
+| 解析线路 | 默认 |
+| 记录值 | **hzexin5-star.github.io** |
+| TTL | 600（10 分钟） |
+
+4. 保存
+
+### 然后双击
+
+**`4-绑定域名.bat`** —— 它会自动完成：检查 DNS → 推送代码 → 设置 GitHub Pages 自定义域名 → 等待 HTTPS 证书 → 线上验证。
+
+> 也可以用命令行：`.\bind-domain.ps1 -Domain price.ireliashop.com`
 
 ---
 
@@ -47,6 +77,7 @@
 | `1-查看部署状态.bat` | 查看 Pages 状态、最近一次构建结果、线上是否正常 | 任何时候 |
 | `2-立即刷新价格.bat` | 立即触发一次重新抓取 + 部署 | 想马上更新价格时（不用等第二天） |
 | `3-上传代码改动.bat` | 把本地改过的代码通过 API 推送到 GitHub | 改了 `build.mjs` / `README.md` 之后 |
+| `4-绑定域名.bat` | 绑定 `price.ireliashop.com`（自动配 GitHub Pages + HTTPS） | 阿里云加好 CNAME 记录之后 |
 
 命令行等价写法：
 
@@ -144,9 +175,11 @@ irelia-toolsite/
 ├── package.json
 ├── README.md                    # 本文件
 ├── github.ps1                   # GitHub 自动化工具（国内可用）
+├── bind-domain.ps1             # 绑定自定义域名
 ├── 1-查看部署状态.bat
 ├── 2-立即刷新价格.bat
 ├── 3-上传代码改动.bat
+├── 4-绑定域名.bat
 ├── .github/workflows/deploy.yml # 每日自动构建 + 部署 + IndexNow
 └── dist/                        # 本地构建产物（不提交，由 Actions 生成）
 ```
