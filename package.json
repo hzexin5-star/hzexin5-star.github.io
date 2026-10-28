@@ -1,0 +1,10 @@
+{
+  "name": "ai-price-radar",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AI 会员价格雷达 - 静态站生成器（数据来自 ireliashop 公开商品页）",
+  "scripts": {
+    "build": "node build.mjs"
+  }
+}
