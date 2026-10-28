@@ -29,9 +29,10 @@ const CONFIG = {
     'AI 会员价格雷达：汇总 ChatGPT、Claude、Gemini、Grok、Perplexity 等 AI 会员与账号的实时价格、库存与规格，帮你快速对比、少花冤枉钱。',
   // 你的 QQ 群（显示在页脚，方便用户咨询）
   qqGroup: '1131806272',
-  // ★ 部署后你的真实域名（sitemap / canonical 会用到）
-  // 已部署到 GitHub Pages：https://hzexin5-star.github.io
-  siteUrl: 'https://hzexin5-star.github.io',
+  // 绑定的自定义域名（绑定 GitHub Pages 用；留空则用 github.io）
+  // 绑定好 price.ireliashop.com 之后，部署产物里会自动带 CNAME 文件
+  customDomain: 'price.ireliashop.com',
+  siteUrl: 'https://price.ireliashop.com',
 
   // IndexNow 密钥（用于自动向 Bing / Yandex 提交新页面，无需账号）
   indexNowKey: 'f3a91c7e5b2d48a6c1e9f0b7d3a5c8e2',
@@ -870,6 +871,11 @@ ${urls
       CONFIG.indexNowKey,
       'utf8'
     );
+  }
+
+  // CNAME 文件：GitHub Pages 靠它识别自定义域名
+  if (CONFIG.customDomain) {
+    await fs.writeFile(path.join(outDir, 'CNAME'), CONFIG.customDomain + '\n', 'utf8');
   }
 
   // 构建元信息（供自动化脚本/内容生成使用）
