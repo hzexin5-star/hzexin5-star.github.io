@@ -1,159 +1,152 @@
-# AI 会员价格雷达 · 静态站生成器
+# AI 会员价格雷达 · 已上线
 
-一个**零成本、零维护**的引流工具站：抓取上游公开商品数据，生成一个「AI 会员价格 / 库存 / 规格」汇总站。
-每个商品都带**你的推广参数**（`?from=你的商户ID`），用户点进去下单，佣金自动归你。
+> **线上地址：<https://hzexin5-star.github.io/>**
+> 已配置**每天自动更新**，你不需要做任何事。
 
-- 纯静态 HTML，30 个页面约 240KB，加载极快
-- 自带 SEO：独立商品页、title/description、JSON-LD 结构化数据、sitemap、robots
-- 自带站内搜索、分类筛选、价格排序
-- 自带一篇《AI 会员选购指南》长文（用于获取长尾搜索流量）
+一个零成本、全自动的引流工具站：每天自动抓取上游公开商品数据，生成「AI 会员价格 / 库存 / 规格」汇总站。
+每个商品都带**你的推广参数**（`?from=27695`），用户点进去下单，佣金自动归你。
 
 ---
 
-## 一、先改 3 个配置（1 分钟）
+## ✅ 现在的状态（已完成）
 
-打开 `build.mjs`，找到最上面的 `CONFIG`：
+| 项目 | 状态 |
+|---|---|
+| 站点部署 | ✅ <https://hzexin5-star.github.io/> |
+| 自动更新 | ✅ 每天北京时间 **06:00** 自动重新抓取价格并部署 |
+| 商品页 | ✅ 26 个独立页面（含规格价格、库存、销量、商品说明） |
+| 选购指南 | ✅ <https://hzexin5-star.github.io/guide.html> |
+| 推广归因 | ✅ 所有商品 CTA 都带 `?from=27695`（30 天 Cookie） |
+| SEO | ✅ title/description/canonical/JSON-LD/sitemap/robots 全套 |
+| 搜索引擎提交 | ✅ 每次部署自动 ping IndexNow（Bing / Yandex） |
+| 客服入口 | ✅ 页脚 QQ 群一键复制 |
+
+**你不用管它，它每天自己更新。**
+
+---
+
+## 📦 仓库与自动化
+
+- 代码仓库：`hzexin5-star/hzexin5-star.github.io`
+- 部署方式：GitHub Actions（`.github/workflows/deploy.yml`）
+  - 每天 UTC 22:00（北京 06:00）自动构建部署
+  - 支持手动触发
+  - 推送代码时自动构建
+
+### ⚠️ 重要：你的网络访问不了 github.com 网页端
+
+实测你这边 `github.com` 超时（被墙），但 **`api.github.com` 和 `github.io` 都能通**。
+所以不能用浏览器管理仓库、也不能用 `git push`。**用下面的工具代替。**
+
+---
+
+## 🛠 三个双击就能用的工具
+
+| 文件 | 作用 | 什么时候用 |
+|---|---|---|
+| `1-查看部署状态.bat` | 查看 Pages 状态、最近一次构建结果、线上是否正常 | 任何时候 |
+| `2-立即刷新价格.bat` | 立即触发一次重新抓取 + 部署 | 想马上更新价格时（不用等第二天） |
+| `3-上传代码改动.bat` | 把本地改过的代码通过 API 推送到 GitHub | 改了 `build.mjs` / `README.md` 之后 |
+
+命令行等价写法：
+
+```powershell
+.\github.ps1 status     # 查看状态
+.\github.ps1 rebuild    # 立即刷新价格
+.\github.ps1 push       # 上传代码改动
+.\github.ps1 open       # 在浏览器打开网站
+```
+
+> 原理：脚本从 Windows 凭据管理器读取你的 GitHub Token，走 `api.github.com` 提交，绕开被墙的 `github.com`。
+
+---
+
+## 📝 常见改动怎么做
+
+### 1. 改品牌名 / 简介
+编辑 `build.mjs` 顶部的 `CONFIG`：
 
 ```js
-const CONFIG = {
-  base: 'https://www.ireliashop.com',   // 不用改
-  from: '27695',                        // ★ 改成你的商户ID（现在已经是你的了）
-  siteName: 'AI 会员价格雷达',            // ★ 改成你的品牌名
-  siteTagline: '...',                   // 站点副标题
-  siteDesc: '...',                      // 站点简介（会进 SEO 描述）
-  siteUrl: 'https://ai-price-radar.pages.dev', // ★ 部署后改成你的真实域名
-  ...
-};
+siteName: 'AI 会员价格雷达',
+siteTagline: '...',
+siteDesc: '...',
+qqGroup: '1131806272',   // 页脚展示的 QQ 群
 ```
 
-> `from` 就是后台「我的主页 → 推广链接」里的 `?from=27695` 那个数字。
-> 用户通过你的站跳到下单页后，上游会给浏览器写入 30 天的 `promotion_from` Cookie，**成交佣金算你的**（已验证）。
+改完双击 `3-上传代码改动.bat`。
 
----
+### 2. 改推广 ID
+`CONFIG.from = '27695'`（现在就是你的，一般不用改）。
 
-## 二、构建（10 秒）
+### 3. 排除某些商品/分类
+```js
+excludeCategoryIds: [140],   // 排除的分类
+```
+或改 `build.mjs` 里的 `.filter(...)` 链。
 
-双击 `build.bat`，或者在命令行里：
-
+### 4. 本地预览
 ```bash
-node build.mjs
+node build.mjs     # 生成到 dist/
 ```
+然后用任意静态服务器打开 `dist/index.html`，或双击 `build.bat`。
 
-看到 `[5/5] 完成 ✅` 后，所有文件都在 **`dist/`** 文件夹里。
-
-构建过程会：
-1. 拉取商品分类（9 个）
-2. 拉取商品列表（28 个）
-3. 逐个抓取商品详情页 → 提取规格价格、库存、销量、商品说明
-4. 生成 `index.html` + 28 个商品页 + `guide.html` + `sitemap.xml` + `robots.txt`
+### 5. 手动部署到其他平台（可选）
+`dist/` 是纯静态目录，可以拖到 Netlify Drop / Cloudflare Pages / 任何静态托管。
+> 注意：换域名后要同步改 `CONFIG.siteUrl`，否则 sitemap 和 canonical 会错。
 
 ---
 
-## 三、部署（免费，5 分钟）
+## 📈 SEO 进度（自动化部分已做完，剩下是等）
 
-### 方案 A：Netlify Drop（最简单，拖拽即上线）
+- ✅ `sitemap.xml`（26+ URL）
+- ✅ `robots.txt`
+- ✅ 每个商品独立 URL + 独立 title/description
+- ✅ JSON-LD 结构化数据（Product / Article / WebSite）
+- ✅ Bing / Yandex 自动提交（IndexNow，每次部署自动 ping）
 
-1. 打开 <https://app.netlify.com/drop>
-2. 把 **`dist` 文件夹**整个拖进去
-3. 立刻得到一个 `https://随机名字.netlify.app` 域名
-4. 注册账号可保留站点、改名、绑定自己的域名
+**还差一步（需要你花 3 分钟）：**
+- Google 收录：<https://search.google.com/search-console> → 添加 `hzexin5-star.github.io` → 提交 sitemap
+  （需要能访问 Google，你这边可能要开代理）
 
-### 方案 B：Cloudflare Pages（国内访问相对稳定）
-
-1. 注册 <https://dash.cloudflare.com/>
-2. 左侧 **Workers & Pages** → **Create** → **Pages** → **Upload assets**
-3. 项目名随便填 → 把 `dist` 文件夹拖进去 → **Deploy**
-4. 得到 `https://你的项目名.pages.dev`
-
-### 方案 C：国内可访问（需要域名备案）
-
-- 腾讯云 **EdgeOne Pages**（有免费额度，国内节点）
-- 阿里云 **OSS 静态网站托管** + CDN
-- 注意：国内节点 + 自定义域名需要 **ICP 备案**
+> 现实预期：SEO 是慢变量，前 1–2 个月基本没量。
+> 这个站对你更直接的价值是**信任背书**——发内容、私聊时报出这个网址，用户对你的信任会明显不同。
 
 ---
 
-## 四、每日更新价格（30 秒）
+## ⚠️ 关于域名（想升级的话）
 
-商品价格和库存会变，建议每天重新构建一次：
+现在用的是 GitHub 免费二级域名 `hzexin5-star.github.io`。
 
-```
-双击 build.bat → 进托管后台 → 重新上传 dist
-```
+- 好处：免费、全自动、已经能访问
+- 缺点：域名看起来不像"正经商家"，转化率会打折扣；且 `github.io` 在国内偶尔不稳
 
-想全自动的话（可选，需要一点点动手能力）：
-- 把项目推到 GitHub
-- 用 GitHub Actions 定时跑 `node build.mjs`
-- 用 Cloudflare Pages 连 GitHub，自动部署
-
-> 提示：页面顶部会显示「数据更新于 XXXX」，用户能看出数据新鲜度，不必追求实时。
+**建议后续花 ~¥30–60/年 买个域名**（如 `ai-price-radar.com`），绑定步骤：
+1. 在域名商后台加 CNAME：`你的域名` → `hzexin5-star.github.io`
+2. 在 `build.mjs` 改 `CONFIG.siteUrl`
+3. 在仓库 Settings → Pages → Custom domain 填域名（这条需要能访问 github.com，可能要开代理，或者让我来操作）
 
 ---
 
-## 五、让搜索引擎收录（重要）
-
-部署完拿到域名后：
-
-1. **Google Search Console**：<https://search.google.com/search-console>
-   - 添加资源 → 输入你的域名 → 验证（DNS 或 HTML 文件）
-   - 提交 sitemap：`https://你的域名/sitemap.xml`
-2. **Bing Webmaster**：<https://www.bing.com/webmasters>
-   - 同样提交 sitemap（Bing 在国内可访问，值得做）
-3. 百度需要备案网站，海外域名收录效果差，**不要指望百度**
-
-> 现实预期：SEO 是慢变量，前 1–2 个月基本没量。这个站对你更直接的价值是——
-> **作为一个「专业工具站」的信任背书**：发内容、发群、私聊时说「我做了个比价工具，你先自己查」，比直接报价值钱得多。
-
----
-
-## 六、绑定自己的域名（可选，推荐）
-
-托管平台都支持绑定自定义域名（免费）。有了自己的域名后：
-
-1. 把 `CONFIG.siteUrl` 改成新域名
-2. 重新构建 + 重新部署
-3. 到 Google/Bing 重新提交 sitemap
-
----
-
-## 七、常见问题
-
-**Q：价格不对 / 有商品没抓到？**
-上游商品上下架、改价是实时的。重新跑一次 `node build.mjs` 即可。
-
-**Q：会不会被上游认为是抄袭？**
-你是上游的分销商，帮他带流量和成交，这是分销的正常玩法。而且你的站有自己的价格对比、规格整理、选购指南，不是简单复制。
-
-**Q：需要服务器吗？**
-不需要。纯静态文件，任何静态托管都能放。
-
-**Q：会不会被平台封？**
-这是你自己的独立域名站点，不依赖闲鱼/小红书，不受它们封号影响。唯一要注意的是内容合规（见下文）。
-
----
-
-## 八、注意事项
+## ⚖️ 合规说明
 
 - 本站定位是「**公开价格信息整理工具**」，页脚已声明不参与交易、不提供售后，请保留这段声明。
-- 商品名里如果出现敏感词（如具体平台名），建议你自己在 `CONFIG` 里加一层替换规则，或接受现状——独立站没有平台审核，风险主要来自支付通道和上游。
-- 这是一个**引流工具**，不是收入本身。真正的成交还是发生在你的私域和上游下单页。
+- 商品名为上游原始数据，本站不做改写。
+- 这是一个**引流工具**，不是收入本身。成交发生在你的私域和上游下单页。
 
 ---
 
-## 文件说明
+## 📁 文件说明
 
 ```
 irelia-toolsite/
-├── build.mjs        # 生成器（主要改这个）
-├── build.bat        # 双击构建
+├── build.mjs                    # 站点生成器（要改配置就改这里）
+├── build.bat                    # 本地构建
 ├── package.json
-├── README.md        # 本文件
-├── dist/            # ← 构建产物，上传这个文件夹
-│   ├── index.html       # 首页（搜索/筛选/排序）
-│   ├── guide.html       # 选购指南长文（SEO）
-│   ├── p/1.html ...     # 每个商品一个独立页
-│   ├── assets/          # 样式 + 交互 JS
-│   ├── sitemap.xml
-│   └── robots.txt
-└── preview-*.png    # 效果截图
+├── README.md                    # 本文件
+├── github.ps1                   # GitHub 自动化工具（国内可用）
+├── 1-查看部署状态.bat
+├── 2-立即刷新价格.bat
+├── 3-上传代码改动.bat
+├── .github/workflows/deploy.yml # 每日自动构建 + 部署 + IndexNow
+└── dist/                        # 本地构建产物（不提交，由 Actions 生成）
 ```
