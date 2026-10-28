@@ -58,8 +58,12 @@ jobs:
       - name: Ping IndexNow (Bing / Yandex 自动收录)
         run: |
           KEY=f3a91c7e5b2d48a6c1e9f0b7d3a5c8e2
-          BASE=https://hzexin5-star.github.io
-          curl -s -X POST "https://api.indexnow.org/indexnow" \
-            -H "Content-Type: application/json; charset=utf-8" \
-            -d "{\"host\":\"hzexin5-star.github.io\",\"key\":\"$KEY\",\"keyLocation\":\"$BASE/$KEY.txt\",\"urlList\":[\"$BASE/\",\"$BASE/guide.html\",\"$BASE/sitemap.xml\"]}" \
-            -w "\nIndexNow HTTP %{http_code}\n" || true
+          # 同时向 github.io 和自定义域名提交（自定义域名未绑定时失败不影响）
+          for BASE in https://hzexin5-star.github.io https://price.ireliashop.com; do
+            HOST="${BASE#https://}"
+            echo "--- IndexNow -> $HOST"
+            curl -s -X POST "https://api.indexnow.org/indexnow" \
+              -H "Content-Type: application/json; charset=utf-8" \
+              -d "{\"host\":\"$HOST\",\"key\":\"$KEY\",\"keyLocation\":\"$BASE/$KEY.txt\",\"urlList\":[\"$BASE/\",\"$BASE/guide.html\",\"$BASE/sitemap.xml\"]}" \
+              -w "\nHTTP %{http_code}\n" || true
+          done
